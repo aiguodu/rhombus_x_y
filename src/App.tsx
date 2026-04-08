@@ -43,7 +43,7 @@ export default function App() {
             <h1 className="text-lg font-bold text-slate-800">初中几何：菱形折叠问题</h1>
           </div>
           <div className="px-3 py-1 bg-slate-100 text-slate-600 text-sm font-medium rounded-full">
-            动点与折叠
+            纯几何法 (相似与辅助线)
           </div>
         </header>
 

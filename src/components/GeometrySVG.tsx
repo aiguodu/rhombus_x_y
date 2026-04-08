@@ -16,11 +16,6 @@ export const GeometrySVG: React.FC<Props> = ({ step }) => {
   const G = { x: -51.96, y: -70 };
   const M = { x: -43.3, y: -25 }; // Midpoint of AE
 
-  // Right angle symbol points
-  const P1 = { x: M.x + 9.8, y: M.y + 1.9 };
-  const P2 = { x: P1.x - 1.9, y: P1.y + 9.8 };
-  const P3 = { x: M.x - 1.9, y: M.y + 9.8 };
-
   const drawPoint = (p: {x: number, y: number}, label: string, pos: 'top' | 'bottom' | 'left' | 'right' | 'top-right' = 'top') => {
     let dx = 0, dy = 0;
     if (pos === 'top') dy = -15;
@@ -50,29 +45,10 @@ export const GeometrySVG: React.FC<Props> = ({ step }) => {
         
         {/* Step 1: Highlight triangles */}
         <AnimatePresence>
-          {step >= 1 && (
+          {step >= 0 && (
             <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               <polygon points={`${A.x},${A.y} ${F.x},${F.y} ${G.x},${G.y}`} className="fill-blue-500/10" />
               <polygon points={`${E.x},${E.y} ${F.x},${F.y} ${G.x},${G.y}`} className="fill-green-500/10" />
-            </motion.g>
-          )}
-        </AnimatePresence>
-
-        {/* Step 2: Coordinate System */}
-        <AnimatePresence>
-          {step >= 2 && (
-            <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              {/* X axis */}
-              <motion.line x1="-220" y1="0" x2="220" y2="0" className="stroke-slate-400 stroke-1" strokeDasharray="4 4" />
-              <polygon points="220,-4 228,0 220,4" className="fill-slate-400" />
-              <text x="210" y="-10" className="text-sm font-serif italic fill-slate-500">x</text>
-              
-              {/* Y axis */}
-              <motion.line x1="0" y1="150" x2="0" y2="-150" className="stroke-slate-400 stroke-1" strokeDasharray="4 4" />
-              <polygon points="-4,-150 0,-158 4,-150" className="fill-slate-400" />
-              <text x="10" y="-140" className="text-sm font-serif italic fill-slate-500">y</text>
-              
-              <text x="-12" y="15" className="text-sm font-serif italic fill-slate-500">O</text>
             </motion.g>
           )}
         </AnimatePresence>
@@ -92,32 +68,58 @@ export const GeometrySVG: React.FC<Props> = ({ step }) => {
           </motion.g>
         )}
 
-        {/* Step 3: Highlight E */}
+        {/* Step 2: Draw EB and right angle */}
+        <AnimatePresence>
+          {step >= 1 && (
+            <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <motion.line 
+                x1={E.x} y1={E.y} x2={B.x} y2={B.y} 
+                className="stroke-blue-500 stroke-2" strokeDasharray="5 5"
+                initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+              />
+              {/* Right angle at B */}
+              <path d="M -13 92.5 L -5.5 79.5 L 7.5 87" className="stroke-blue-500 stroke-[1.5] fill-transparent" />
+              <polygon points={`${B.x},${B.y} ${C.x},${C.y} ${E.x},${E.y}`} className="fill-blue-500/10" />
+            </motion.g>
+          )}
+        </AnimatePresence>
+
+        {/* Step 3: Highlight AF, EF, FB lengths */}
+        <AnimatePresence>
+          {step >= 2 && (
+            <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              <polygon points={`${E.x},${E.y} ${B.x},${B.y} ${F.x},${F.y}`} className="fill-amber-500/10" />
+              <line x1={A.x} y1={A.y} x2={F.x} y2={F.y} className="stroke-amber-500 stroke-[3]" />
+              <line x1={E.x} y1={E.y} x2={F.x} y2={F.y} className="stroke-amber-500 stroke-[3]" />
+              <line x1={F.x} y1={F.y} x2={B.x} y2={B.y} className="stroke-rose-500 stroke-[3]" />
+              
+              <text x="-107.4" y="33.75" className="text-lg font-serif italic fill-amber-600 font-bold">x</text>
+              <text x="42.4" y="8.75" className="text-lg font-serif italic fill-amber-600 font-bold">x</text>
+              <text x="-20.8" y="108.75" className="text-lg font-serif italic fill-rose-600 font-bold">2-x</text>
+            </motion.g>
+          )}
+        </AnimatePresence>
+
+        {/* Step 4: Draw AE */}
         <AnimatePresence>
           {step >= 3 && (
             <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <circle cx={E.x} cy={E.y} r="8" className="fill-green-500/30 animate-pulse" />
+              <motion.line 
+                x1={A.x} y1={A.y} x2={E.x} y2={E.y} 
+                className="stroke-purple-500 stroke-2" strokeDasharray="5 5"
+                initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+              />
+              <polygon points={`${A.x},${A.y} ${B.x},${B.y} ${E.x},${E.y}`} className="fill-purple-500/10" />
             </motion.g>
           )}
         </AnimatePresence>
 
-        {/* Step 4: AE and perpendicular */}
+        {/* Step 5: Highlight M and right angle */}
         <AnimatePresence>
           {step >= 4 && (
             <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <motion.line x1={A.x} y1={A.y} x2={E.x} y2={E.y} className="stroke-red-500 stroke-2" strokeDasharray="4 4" />
               {drawPoint(M, 'M', 'top-right')}
-              {/* Right angle symbol */}
-              <path d={`M ${P1.x} ${P1.y} L ${P2.x} ${P2.y} L ${P3.x} ${P3.y}`} className="stroke-red-500 stroke-[1.5] fill-transparent" />
-            </motion.g>
-          )}
-        </AnimatePresence>
-
-        {/* Step 5: Highlight F */}
-        <AnimatePresence>
-          {step >= 5 && (
-            <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <circle cx={F.x} cy={F.y} r="8" className="fill-indigo-500/30 animate-pulse" />
+              <path d="M -55.1 -22.7 L -52.8 -10.9 L -41.0 -13.2" className="stroke-slate-800 stroke-[1.5] fill-transparent" />
             </motion.g>
           )}
         </AnimatePresence>
@@ -133,14 +135,14 @@ export const GeometrySVG: React.FC<Props> = ({ step }) => {
 
         {/* Step 6: Highlight Angle */}
         <AnimatePresence>
-          {step >= 6 && (
+          {step >= 5 && (
             <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              {/* Angle AFG */}
+              <polygon points={`${A.x},${A.y} ${M.x},${M.y} ${F.x},${F.y}`} className="fill-rose-500/20" />
               <path 
-                d={`M ${F.x - 13} ${F.y - 7.5} A 15 15 0 0 1 ${F.x - 4} ${F.y - 14.5}`} 
+                d="M -38.95 77.5 A 20 20 0 0 1 -25.45 67.9" 
                 className="stroke-rose-500 stroke-2 fill-transparent" 
               />
-              <text x={F.x - 25} y={F.y - 20} className="text-sm font-serif italic fill-rose-500">θ</text>
+              <text x="-40" y="60" className="text-sm font-serif italic fill-rose-600 font-bold">θ</text>
             </motion.g>
           )}
         </AnimatePresence>
